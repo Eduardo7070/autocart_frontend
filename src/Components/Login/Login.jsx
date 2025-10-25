@@ -1,27 +1,91 @@
-import { FaUser, FaLock } from 'react-icons/fa'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import bcrypt from "bcryptjs-react";
+
 import './Login.css'
+import { FaUser, FaLock } from 'react-icons/fa'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+
+
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [tipoAcesso, setTipoAcesso] = useState("");
+  const navigate = useNavigate();
 
   const enviarForm = async (event) => {
     event.preventDefault()
-    console.log("Teste", username, password)
-    
-    try { 
+    console.log("Enviando form")
+
+    try {
       const response = await axios.post("http://localhost:8880/login/", {
         usuario: username,
-        senha: password,  
+        senha: password,
         tipo_acesso: tipoAcesso
       })
       console.log(response.data)
+
+      if (response.status === 200 && tipoAcesso === "admin") {
+        Swal.fire({
+          icon: 'success',
+          title: 'Login realizado com sucesso!',
+          text: 'Bem-vindo, Usuario: ' + username + '!',
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        }).then(() => {
+          navigate('/admin');
+        })
+
+
+      } else if (response.status === 200 && tipoAcesso === "caixa") {
+        Swal.fire({
+          icon: 'success',
+          title: 'Login realizado com sucesso!',
+          text: 'Bem-vindo, Usuario: ' + username + '!',
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        }).then(() => {
+          navigate('/caixa');
+        })
+
+      } else if (response.status === 200 && tipoAcesso === "gerente") {
+        Swal.fire({
+          icon: 'success',
+          title: 'Login realizado com sucesso!',
+          text: 'Bem-vindo, Usuario: ' + username + '!',
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        }).then(() => {
+          navigate('/gerente');
+        })
+        
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro no login!',
+          text: 'Tipo de acesso inválido.',
+          timer: 3000,
+          showConfirmButton: false
+        })
+      }
+
     } catch (err) {
       console.error("ops! ocorreu um erro: " + err)
+
+      if (err.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro no login!',
+          text: 'Verifique suas credenciais e tente novamente.',
+          timer: 3000,
+          showConfirmButton: false
+        })
+      }
+
     }
 
   }
@@ -43,7 +107,7 @@ const Login = () => {
             <option value="">Selecione o tipo de acesso</option>
             <option value="admin">Administrador</option>
             <option value="caixa">Caixa</option>
-            <option value="Gerente">Gerente</option>
+            <option value="gerente">Gerente</option>
           </select>
         </div>
 
