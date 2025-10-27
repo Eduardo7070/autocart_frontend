@@ -6,7 +6,10 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
-
+const infosLocalStorage = (username, tipoAcesso) => {
+  localStorage.setItem('username', username);
+  localStorage.setItem('tipoAcesso', tipoAcesso);
+}
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -27,15 +30,16 @@ const Login = () => {
       console.log(response.data)
 
       if (response.status === 200 && tipoAcesso === "admin") {
+
         Swal.fire({
           icon: 'success',
           title: 'Login realizado com sucesso!',
           text: 'Bem-vindo, Usuario: ' + username + '!',
-          timer: 3000,
+          timer: 1500,
           timerProgressBar: true,
           showConfirmButton: false
         }).then(() => {
-          navigate('/admin');
+          navigate('/admin', infosLocalStorage(username, tipoAcesso));
         })
 
 
@@ -44,11 +48,11 @@ const Login = () => {
           icon: 'success',
           title: 'Login realizado com sucesso!',
           text: 'Bem-vindo, Usuario: ' + username + '!',
-          timer: 3000,
+          timer: 1500,
           timerProgressBar: true,
           showConfirmButton: false
         }).then(() => {
-          navigate('/caixa');
+          navigate('/caixa'), infosLocalStorage(username, tipoAcesso);
         })
 
       } else if (response.status === 200 && tipoAcesso === "gerente") {
@@ -56,13 +60,13 @@ const Login = () => {
           icon: 'success',
           title: 'Login realizado com sucesso!',
           text: 'Bem-vindo, Usuario: ' + username + '!',
-          timer: 3000,
+          timer: 1500,
           timerProgressBar: true,
           showConfirmButton: false
         }).then(() => {
-          navigate('/gerente');
+          navigate('/gerente', infosLocalStorage(username, tipoAcesso));
         })
-        
+
       } else {
         Swal.fire({
           icon: 'error',
@@ -92,7 +96,7 @@ const Login = () => {
   return (
     <div className="container">
       <form onSubmit={enviarForm} className="login-form">
-        <h1>Acessar Sistema</h1>
+        <h1>AutoCart</h1>
         <div>
           <input type="text" placeholder="Usuario" onChange={(e) => setUsername(e.target.value)} />
           <FaUser className='icon' />
